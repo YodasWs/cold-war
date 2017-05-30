@@ -14,12 +14,6 @@ const options = {
 	compileSass:{
 		outputStyle:'compressed'
 	},
-	compileES6:{
-		presets:[
-			'react',
-			'es2015'
-		]
-	},
 	addHeader:(()=> {
 		return "/* <%= file.basename %> */\n"
 	})(),

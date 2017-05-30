@@ -19,6 +19,7 @@
 		"express": "^4.15.3"
 	},
 	"devDependencies": {
+		"babel-plugin-transform-exponentiation-operator": "^6.24.1",
 		"babel-preset-es2015": "^6.24.1",
 		"babel-preset-react": "^6.24.1",
 		"gulp": "github:gulpjs/gulp#4.0",
@@ -35,7 +36,19 @@
 			"es6": true
 		},
 		"rules": {
-			"strict": ["error", "global"]
+			"strict": [
+				"error",
+				"global"
+			]
 		}
+	},
+	"babel": {
+		"plugins": [
+			"transform-exponentiation-operator"
+		],
+		"presets": [
+			"react",
+			"es2015"
+		]
 	}
 }
