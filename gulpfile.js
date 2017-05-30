@@ -5,12 +5,20 @@ const plugins = {
 	prefixSass: require('gulp-autoprefixer'),
 	rmLines: require('gulp-delete-lines'),
 	compileSass: require('gulp-sass'),
+	compileES6: require('gulp-babel'),
 	addHeader: require('gulp-header'),
+	lint: require('gulp-eslint'),
 }
 
 const options = {
 	compileSass:{
 		outputStyle:'compressed'
+	},
+	compileES6:{
+		presets:[
+			'react',
+			'es2015'
+		]
 	},
 	addHeader:(()=> {
 		return "/* <%= file.basename %> */\n"
@@ -21,6 +29,22 @@ const options = {
 }
 
 gulp.task('compile:js', () => {
+	const tasks = [
+		'lint',
+		'compileES6',
+	]
+	let stream = gulp.src([
+		'src/js/*.js',
+		'!node_modules/**'
+	])
+	for (let i=0, k=tasks.length; i<k; i++) {
+		const option = options[tasks[i]] || {}
+		stream = stream.pipe(plugins[tasks[i]](option))
+	}
+	if (tasks.indexOf('lint') != -1) {
+		stream.pipe(plugins.lint.format())
+	}
+	return stream.pipe(gulp.dest('./docs/js/'))
 })
 
 gulp.task('compile:sass', () => {
@@ -31,7 +55,7 @@ gulp.task('compile:sass', () => {
 		'rmLines',
 	]
 	let stream = gulp.src([
-		'scss/*.scss'
+		'src/scss/*.scss'
 	])
 	for (let i=0, k=tasks.length; i<k; i++) {
 		const option = options[tasks[i]] || {}
@@ -43,8 +67,8 @@ gulp.task('compile:sass', () => {
 gulp.task('compile', gulp.parallel('compile:js', 'compile:sass'))
 
 gulp.task('watch', () => {
-	gulp.watch('./**/*.scss', ['compile:sass'])
-	gulp.watch('./**/*.js', ['compile:js'])
+	gulp.watch('./src/**/*.scss', ['compile:sass'])
+	gulp.watch('./src/**/*.js', ['compile:js'])
 })
 
 gulp.task('default', () => {
